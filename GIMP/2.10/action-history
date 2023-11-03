@@ -1,0 +1,9 @@
+# GIMP action-history
+
+(history-item "file-save-as" 1)
+(history-item "file-open" 0)
+(history-item "image-crop-to-content" 0)
+(history-item "tools-crop" 0)
+(history-item "file-export-as" 1)
+
+# end of action-history

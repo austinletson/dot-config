@@ -1,0 +1,8 @@
+[[language]]
+name = "haskell"
+auto-format = true
+
+[[langauge]]
+name = "typescript"
+formatter = { command = 'npx', args = ["prettier", "--parser", "typescript"] }
+auto-format = true
