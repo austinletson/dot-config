@@ -1,3 +1,12 @@
+:t ( (+) <$> [2,3,4] <*> pure 4)
+(+)
+:t (+) <$> [2,3,4] <*> pure 4.
+(+) <$> [2,3,4] <*> pure 4.
+ghci>(+) <$> [2,3,4] <*> pure 4.
+:h const
+:i const
+:i MyFunctor
+:t MyFunctor
 :q
 :t e
 :i e
