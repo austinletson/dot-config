@@ -112,3 +112,5 @@ source <(fzf --zsh)
 # -- Zoxide --
 eval "$(zoxide init zsh)"
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+[ -f "/home/austin/.ghcup/env" ] && . "/home/austin/.ghcup/env" # ghcup-env
