@@ -106,15 +106,6 @@ PROMPT="\$(vi_mode_prompt_info) $PROMPT"
 INSERT_MODE_INDICATOR="%F{white}[I]%f"
 MODE_INDICATOR="%F{red}[N]%f"
 
-
-# -- FZF --
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
-
-# -- Zoxide --
-eval "$(zoxide init zsh)"
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 [ -f "/home/austin/.ghcup/env" ] && . "/home/austin/.ghcup/env" # ghcup-env
 
 
@@ -125,3 +116,15 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # This section can be safely removed at any time if needed.
 [[ ! -r '/home/austin/.opam/opam-init/init.zsh' ]] || source '/home/austin/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 # END opam configuration
+
+# fish like highlighting and autosuggestions
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# -- FZF --
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+
+# -- Zoxide --
+eval "$(zoxide init zsh)"
+
