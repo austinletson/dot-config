@@ -88,6 +88,8 @@ alias bl="sudo xbacklight -set"
 
 alias cd="z"
 
+alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | sk)'
+
 alias lg="lazygit"
 
 # nvim kickstart alias
