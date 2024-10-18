@@ -74,11 +74,14 @@ plugins=(git vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
+# -- Environment Variables --
 # Set editor
 export EDITOR='nvim'
 
-# -- Aliases --
+# Set current year ledger file
+export LEDGER_FILE="$HOME/finances/2024.journal"
 
+# -- Aliases --
 # vim
 alias vim=nvim
 alias view="nvim -R"
@@ -94,6 +97,9 @@ alias lg="lazygit"
 
 # nvim kickstart alias
 alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
+
+# hledger aliases
+alias hl='hledger'
 
 # -- Vim Mode --
 # Configure editing commands in vim
