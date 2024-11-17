@@ -89,8 +89,6 @@ alias view="nvim -R"
 # Backlight alias 
 alias bl="sudo xbacklight -set"
 
-alias cd="z"
-
 alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | sk)'
 alias tn='tmux new -s'
 
