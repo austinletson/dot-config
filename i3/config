@@ -171,7 +171,7 @@ bindcode $mod+Shift+90 	 move container to workspace  $ws10
 ######################################
 
 # start a terminal
-bindsym $mod+g exec alacritty
+bindsym $mod+g exec kitty 
 
 # kill focused window
 bindsym $mod+Shift+c kill
