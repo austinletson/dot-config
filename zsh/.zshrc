@@ -79,7 +79,7 @@ source $ZSH/oh-my-zsh.sh
 export EDITOR='nvim'
 
 # Set current year ledger file
-export LEDGER_FILE="$HOME/finances/2024.journal"
+export LEDGER_FILE="$HOME/finances/2025.journal"
 
 # -- Aliases --
 # vim
@@ -89,7 +89,7 @@ alias view="nvim -R"
 # Backlight alias 
 alias bl="sudo xbacklight -set"
 
-alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | sk)'
+alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | fzf)'
 alias tn='tmux new -s'
 
 alias lg="lazygit"
@@ -138,3 +138,5 @@ eval "$(zoxide init zsh)"
 
 # Created by `pipx` on 2024-10-20 12:58:10
 export PATH="$PATH:/home/austin/.local/bin"
+
+source /home/austin/.config/broot/launcher/bash/br
