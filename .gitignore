@@ -14,3 +14,4 @@ zoomus.conf
 nushell/history.txt
 ghc
 go/telemetry/local
+zsh/env.sh
