@@ -8,6 +8,8 @@ return {
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.pack.python-ruff" },
   { import = "astrocommunity.pack.json" },
+  { import = "astrocommunity.pack.lean" },
+
 
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.diagnostics.trouble-nvim" },
