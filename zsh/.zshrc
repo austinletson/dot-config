@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode fzf-tab)
+plugins=(git fzf-tab)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -102,16 +102,16 @@ alias hl='hledger'
 
 # -- Vim Mode --
 # Configure editing commands in vim
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd v edit-command-line
+# autoload -U edit-command-line
+# zle -N edit-command-line
+# bindkey -M vicmd v edit-command-line
 
 # Configure prompt
-PROMPT="\$(vi_mode_prompt_info) $PROMPT"
+# PROMPT="\$(vi_mode_prompt_info) $PROMPT"
 
 # vi-mode indicator
-INSERT_MODE_INDICATOR="%F{white}[I]%f"
-MODE_INDICATOR="%F{red}[N]%f"
+# INSERT_MODE_INDICATOR="%F{white}[I]%f"
+# MODE_INDICATOR="%F{red}[N]%f"
 
 [ -f "/home/austin/.ghcup/env" ] && . "/home/austin/.ghcup/env" # ghcup-env
 
