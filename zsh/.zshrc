@@ -146,8 +146,5 @@ source <(fzf --zsh)
 # -- Zoxide --
 eval "$(zoxide init zsh)"
 
-
-# Created by `pipx` on 2024-10-20 12:58:10
-export PATH="$PATH:/home/austin/.local/bin"
-
+# -- br --
 source /home/austin/.config/broot/launcher/bash/br
