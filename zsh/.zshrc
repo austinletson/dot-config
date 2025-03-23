@@ -148,3 +148,6 @@ eval "$(zoxide init zsh)"
 
 # -- br --
 source /home/austin/.config/broot/launcher/bash/br
+
+# Created by `pipx` on 2025-03-19 12:10:26
+export PATH="$PATH:/home/austin/.local/bin"
