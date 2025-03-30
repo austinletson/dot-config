@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf-tab)
+plugins=(git fzf-tab zsh-vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -151,3 +151,6 @@ source /home/austin/.config/broot/launcher/bash/br
 
 # Created by `pipx` on 2025-03-19 12:10:26
 export PATH="$PATH:/home/austin/.local/bin"
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
