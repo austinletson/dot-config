@@ -44,6 +44,11 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd v edit-command-line
 
+# OSC 133 prompt jump so tmux can jump to last prompt
+preexec () {
+  echo -n "\\x1b]133;A\\x1b\\"
+}
+
 # -- plugins --
 # Pure prompt
 fpath+=(~/.config/zsh/pure)
