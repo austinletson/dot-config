@@ -42,7 +42,7 @@ bindkey "^?" backward-delete-char
 # Configure editing commands in vim
 autoload -U edit-command-line
 zle -N edit-command-line
-bindkey -M vicmd v edit-command-line
+bindkey '^e' edit-command-line
 
 # OSC 133 prompt jump so tmux can jump to last prompt
 preexec () {
