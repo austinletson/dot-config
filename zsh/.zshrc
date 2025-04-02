@@ -5,6 +5,10 @@ export EDITOR='nvim'
 # Set current year ledger file
 export LEDGER_FILE="$HOME/finances/2025.journal"
 
+# -- History Configuration --
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=50000
+export SAVEHIST=10000
 
 # -- Aliases --
 # vim
