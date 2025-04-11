@@ -890,3 +890,4 @@ $env.config = {
         }
     ]
 }
+use '/home/austin/.config/broot/launcher/nushell/br' *

@@ -572,6 +572,8 @@ strip_workspace_numbers yes
 bindsym $mod+d exec rofi -modi drun -show drun \
 		-config ~/.config/rofi/rofidmenu.rasi
 
+bindsym $mod+c exec clipmenu
+
 #bindsym F9 exec rofi -modi drun -show drun \
 #		-config ~/.config/rofi/rofidmenu.rasi
 

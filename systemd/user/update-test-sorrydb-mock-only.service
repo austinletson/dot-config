@@ -1,5 +1,0 @@
-[Unit]
-Description=Update test sorrydb mock only
-
-[Service]
-ExecStart=/home/austin/development/lean/sorry-index/sorry-db-data-test-mock-only/commit_database.sh

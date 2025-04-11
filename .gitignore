@@ -16,3 +16,9 @@ ghc
 go/telemetry/local
 zsh/env.sh
 aichat/config.yaml
+systemd/*
+pavucontrol.ini
+tmux/plugins/tmux-fingers/
+ibus/
+fcitx5/
+fcitx/

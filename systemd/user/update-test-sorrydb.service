@@ -1,5 +1,0 @@
-[Unit]
-Description=Update test sorrydb
-
-[Service]
-ExecStart=/home/austin/development/lean/sorry-index/sorry-db-data-test/commit_database.sh
