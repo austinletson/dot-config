@@ -16,3 +16,8 @@ ghc
 go/telemetry/local
 zsh/env.sh
 aichat/config.yaml
+gtk-3.0/bookmarks
+mimeapps.list
+pulse/cookie
+user-dirs.dirs
+user-dirs.locale
