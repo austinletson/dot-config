@@ -23,6 +23,16 @@ alias tn='tmux new -s'
 
 alias lg="lazygit"
 
+# Miller
+alias mcsv='mlr --csv --from'
+alias mcsvp='mlr --csv --opprint --from'
+
+# Git
+alias gs="git branch --sort=-committerdate | fzf --preview 'git show --color=always {-1}' --tmux --height 40% --layout reverse \
+--bind 'enter:become(git switch {-1})'"
+
+
+
 
 # Always start ssh-agent
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
