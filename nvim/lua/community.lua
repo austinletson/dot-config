@@ -23,7 +23,8 @@ return {
   { import = "astrocommunity.motion.mini-ai" },
   { import = "astrocommunity.editing-support.mini-operators" },
 
-  { import = "astrocommunity.completion.avante-nvim" },
+  -- { import = "astrocommunity.completion.avante-nvim" },
+  { import = "astrocommunity.editing-support.copilotchat-nvim" },
   
   { import = "astrocommunity.git.neogit" },
   { import = "astrocommunity.git.diffview-nvim" },
