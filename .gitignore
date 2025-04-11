@@ -22,3 +22,8 @@ tmux/plugins/tmux-fingers/
 ibus/
 fcitx5/
 fcitx/
+gtk-3.0/bookmarks
+mimeapps.list
+pulse/cookie
+user-dirs.dirs
+user-dirs.locale
