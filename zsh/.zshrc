@@ -31,7 +31,8 @@ alias mcsvp='mlr --csv --opprint --from'
 alias gs="git branch --sort=-committerdate | fzf --preview 'git show --color=always {-1}' --tmux --height 40% --layout reverse \
 --bind 'enter:become(git switch {-1})'"
 
-
+# append history to share between tmux sessions
+setopt inc_append_history
 
 
 # Always start ssh-agent
@@ -51,6 +52,10 @@ bindkey -v
 KEYTIMEOUT=1
 # fix bindkey escape strangeness
 bindkey "^?" backward-delete-char
+
+# Ctrl-P and Ctrl-N to scroll through recent history in insert mode
+bindkey -M viins '^P' up-history
+bindkey -M viins '^N' down-history
 
 
 # Configure editing commands in vim
