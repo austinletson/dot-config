@@ -97,6 +97,7 @@ autoload -U compinit; compinit
 source ~/.config/zsh/fzf-tab/fzf-tab.plugin.zsh
 
 # TODO fish like highlighting and autosuggestions
+source ~/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 # -- setup programs with shell interaction --
