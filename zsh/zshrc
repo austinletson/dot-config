@@ -1,0 +1,125 @@
+# -- Environment Variables --
+# Set editor
+export EDITOR='nvim'
+
+
+# Set man pager
+# export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
+
+# -- History Configuration --
+export HISTFILE="$HOME/.zsh_history"
+export HISTSIZE=50000
+export SAVEHIST=10000
+
+# append history to share between tmux sessions
+setopt inc_append_history
+
+# -- Aliases --
+# vim
+alias vim=nvim
+alias view="nvim -R"
+
+alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | fzf)'
+alias tn='tmux new -s'
+
+alias lg="lazygit"
+
+# Miller
+alias mcsv='mlr --csv --from'
+alias mcsvp='mlr --csv --opprint --from'
+
+# Git
+alias gs="git branch --sort=-committerdate | fzf --preview 'git show --color=always {-1}' --tmux --height 40% --layout reverse \
+--bind 'enter:become(git switch {-1})'"
+
+
+
+
+# -- vi mode --
+bindkey -v
+# 10ms for key sequences
+KEYTIMEOUT=1
+# fix bindkey escape strangeness
+bindkey "^?" backward-delete-char
+
+# Ctrl-P and Ctrl-N to scroll through recent history in insert mode
+bindkey -M viins '^P' up-history
+bindkey -M viins '^N' down-history
+
+
+# Configure editing commands in vim
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^e' edit-command-line
+
+# Widget to run current command in new tmux pane
+tmux_split_with_current_command() {
+  # First check if we're in a tmux session
+  if [[ -z "$TMUX" ]]; then
+    zle -M "Not in a tmux session"
+    return 1
+  fi
+
+  # Get the current command line content
+  local cmd="$BUFFER"
+  
+  # Only proceed if there's actually a command
+  if [[ -n "$cmd" ]]; then
+    # Execute tmux split-window with the current command
+    # Using zsh's silent command execution with the () syntax
+    (tmux split-window -h "$cmd" &)
+    
+    # Clear the editing buffer
+    BUFFER=""; CURSOR=0; zle redisplay
+  fi
+}
+
+# Create the widget from the function
+zle -N tmux_split_with_current_command
+
+# Bind Ctrl-\ to the widget
+bindkey '^\' tmux_split_with_current_command
+
+
+# OSC 133 prompt jump so tmux can jump to last prompt
+preexec () {
+  echo -n "\\x1b]133;A\\x1b\\"
+}
+
+# -- plugins --
+# Pure prompt
+fpath+=(~/.config/zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+
+# fzf-tab
+autoload -U compinit; compinit
+source ~/.config/zsh/fzf-tab/fzf-tab.plugin.zsh
+
+# TODO fish like highlighting and autosuggestions
+
+
+# -- setup programs with shell interaction --
+
+# -- FZF --
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+
+# mac ALT-C hack for fzf cd
+bindkey "ç" fzf-cd-widget
+
+# CTRL-Y to copy the command into clipboard using pbcopy
+export FZF_CTRL_R_OPTS="
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+
+# fzf-git commands
+# source ~/.config/zsh/fzf-git.sh
+
+# -- Zoxide --
+# eval "$(zoxide init zsh)"
+
+# -- br --
+# source /Users/austinletson/.config/broot/launcher/bash/br
+

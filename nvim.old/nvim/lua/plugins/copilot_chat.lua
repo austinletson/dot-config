@@ -1,0 +1,14 @@
+-- return {
+--   "CopilotC-Nvim/CopilotChat.nvim",
+--   opts = {
+--     model = "gpt-4.1",
+--     -- default mappings
+--     -- see config/mappings.lua for implementation
+--     mappings = {
+--       complete = {
+--         insert = "<C-e>",
+--       },
+--     },
+--   },
+-- }
+return {}
