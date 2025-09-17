@@ -19,6 +19,8 @@ setopt inc_append_history
 alias vim=nvim
 alias view="nvim -R"
 
+alias avim='NVIM_APPNAME=astrovim nvim'
+
 alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | fzf)'
 alias tn='tmux new -s'
 
@@ -105,6 +107,12 @@ source ~/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # -- FZF --
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
+
+# Jump to a git repository managed by ghq
+gr() {
+    local dir
+    dir=$(ghq list | fzf --height 40% --reverse) && cd "$(ghq root)/$dir"
+}
 
 # mac ALT-C hack for fzf cd
 bindkey "ç" fzf-cd-widget
