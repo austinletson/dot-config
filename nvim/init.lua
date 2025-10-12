@@ -353,6 +353,25 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- Git diff against branch using Telescope picker
+      vim.keymap.set('n', '<leader>gd', function()
+        builtin.git_branches {
+          attach_mappings = function(_, map)
+            map('i', '<CR>', function(prompt_bufnr)
+              local selection = require('telescope.actions.state').get_selected_entry()
+              require('telescope.actions').close(prompt_bufnr)
+              vim.cmd('Gvdiffsplit ' .. selection.value)
+            end)
+            map('n', '<CR>', function(prompt_bufnr)
+              local selection = require('telescope.actions.state').get_selected_entry()
+              require('telescope.actions').close(prompt_bufnr)
+              vim.cmd('Gvdiffsplit ' .. selection.value)
+            end)
+            return true
+          end,
+        }
+      end, { desc = '[G]it [D]iff against branch' })
     end,
   },
 
@@ -879,7 +898,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'latex' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -927,6 +946,8 @@ require('lazy').setup({
   require 'kickstart.plugins.neotest',
   -- require 'kickstart.plugins.avante',
   require 'kickstart.plugins.code_companion',
+  require 'kickstart.plugins.lean',
+  require 'kickstart.plugins.snacks',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
