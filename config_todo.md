@@ -1,0 +1,2 @@
+- [ ] Make nvim key binding for :Gvdiffsplit
+- [ ] Remove telescope entirely
