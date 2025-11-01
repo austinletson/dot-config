@@ -13,6 +13,11 @@ return {
       math = {
         enabled = true, -- enable math expression rendering
       },
+      doc = {
+        conceal = function(lang, type)
+          return type == "math" -- conceal original LaTeX text when rendering math
+        end,
+      },
     },
   },
   keys = {
