@@ -41,7 +41,7 @@ return {
     { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
     { "<leader>fg", function() Snacks.picker.git_status() end, desc = "Git Status" },
     { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
-    { "<leader>gd", function()
+    { "<leader>gD", function()
         Snacks.picker.pick("git_branches", {
           confirm = function(picker)
             local item = picker:current()
