@@ -2,7 +2,6 @@
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -100,7 +99,7 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 vim.keymap.set('n', '|', '<Cmd>vsplit<CR>', { desc = 'Vertical split' })
-vim.keymap.set('n', '\\', '<Cmd>split<CR>', { desc = 'Horizontal split' })
+vim.keymap.set('n', '_', '<Cmd>split<CR>', { desc = 'Horizontal split' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
