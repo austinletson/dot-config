@@ -11,5 +11,6 @@ return {
   keys = {
     { '<leader>gh', '<cmd>0Gclog<cr>', desc = 'Git file history' },
     { '<leader>gB', '<cmd>GBrowse<cr>', desc = 'Git browse on GitHub' },
+    { '<leader>gD', '<cmd>Gvdiffsplit<cr>', desc = 'Git diff split' },
   },
 }
