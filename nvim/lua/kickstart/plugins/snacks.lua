@@ -41,7 +41,16 @@ return {
     { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
     { "<leader>fg", function() Snacks.picker.git_status() end, desc = "Git Status" },
     { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
-    { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
+    { "<leader>gd", function()
+        Snacks.picker.pick("git_branches", {
+          confirm = function(picker)
+            local item = picker:current()
+            if item then
+              vim.cmd("Gvdiffsplit " .. item.text)
+            end
+          end
+        })
+      end, desc = "Git Diff against branch" },
     { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
     -- Grep
     { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
