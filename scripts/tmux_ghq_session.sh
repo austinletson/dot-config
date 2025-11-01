@@ -1,20 +1,26 @@
 #!/bin/bash
 # A script to select a git repository and create or switch to a tmux session.
-# Supports a custom layout when started with Ctrl-Enter.
+# Supports a custom layout when started with Ctrl-O.
 
 # Use fzf to select a repository.
-# --expect=ctrl-enter tells fzf to listen for that key and print it on the first line of output.
-# The output is read into an array: line 1 -> key, line 2 -> repo path.
-readarray -t fzf_output < <(ghq list --full-path | fzf --prompt="Select Git Repository > " --expect=ctrl-enter)
+# --expect=ctrl-o tells fzf to listen for that key and print it on the first line of output.
+# Compatible with older bash versions
+fzf_result=$(ghq list --full-path | fzf --prompt="Select Git Repository > " --expect=ctrl-o)
 
 # Exit if fzf was cancelled (e.g., user pressed Esc)
-if [[ ${#fzf_output[@]} -lt 2 ]]; then
+if [[ -z "$fzf_result" ]]; then
     exit 0
 fi
 
 # Extract the key pressed and the selected repository path
-key_pressed=${fzf_output[0]}
-repo_path=${fzf_output[1]}
+# Split the result by newlines
+key_pressed=$(echo "$fzf_result" | head -n1)
+repo_path=$(echo "$fzf_result" | tail -n1)
+
+# If only one line returned, it means no special key was pressed
+if [[ "$key_pressed" == "$repo_path" ]]; then
+    key_pressed=""
+fi
 
 # Sanitize the repo name to create a valid tmux session name
 # (e.g., "my.project.com" becomes "my-project-com")
@@ -27,7 +33,7 @@ if tmux has-session -t="$session_name" 2>/dev/null; then
 # If the session does NOT exist, create it based on the key press.
 else
     # --- This is the new conditional logic ---
-    if [[ "$key_pressed" == "ctrl-enter" ]]; then
+    if [[ "$key_pressed" == "ctrl-o" ]]; then
         # Create a session with a custom 3-window layout
         tmux new-session -d -s "$session_name" -c "$repo_path" -n "code"
         tmux send-keys -t "$session_name:code" "nvim" C-m

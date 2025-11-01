@@ -53,7 +53,7 @@ else
         --layout=reverse \
         --preview="echo 'Branch: {}'; if git show-ref --verify --quiet refs/heads/{}; then echo 'Status: Local branch'; elif git show-ref --verify --quiet refs/remotes/origin/{}; then echo 'Status: Remote branch'; else echo 'Status: New branch (will be created)'; fi" \
         --preview-window=bottom:3:wrap \
-        --bind="enter:accept-non-empty" | tail -n1)
+        --bind="enter:accept" | tail -n1)
     
     rm "$TEMP_BRANCHES"
     
