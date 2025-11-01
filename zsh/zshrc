@@ -2,6 +2,9 @@
 # Set editor
 export EDITOR='nvim'
 
+# Add scripts folder to PATH
+export PATH="$HOME/.config/scripts:$PATH"
+
 
 # Set man pager
 # export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
@@ -26,6 +29,8 @@ alias ta='tmux attach -t $(tmux list-sessions -F "#{session_name}" | fzf)'
 alias tn='tmux new -s'
 
 alias lg="lazygit"
+
+alias mssh='~/.config/scripts/morphcloud-ssh-fzf.sh'
 
 # Miller
 alias mcsv='mlr --csv --from'
@@ -145,3 +150,7 @@ if [ -f '/Users/austinletson/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/au
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/austinletson/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/austinletson/google-cloud-sdk/completion.zsh.inc'; fi
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# SSL certificates for Python
+export SSL_CERT_FILE=$(python3 -m certifi)
+export REQUESTS_CA_BUNDLE=$(python3 -m certifi)
