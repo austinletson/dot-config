@@ -1,2 +1,3 @@
 - [ ] Make nvim key binding for :Gvdiffsplit
 - [ ] Remove telescope entirely
+- [ ] Unify tmux pop up uis
