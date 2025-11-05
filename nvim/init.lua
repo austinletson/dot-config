@@ -305,7 +305,39 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        basedpyright = {},
+        -- Buffer validation to prevent LSP from attaching to artificial buffers
+        -- (fugitive://, diffview://, etc.) Reference: https://github.com/neovim/neovim/issues/33061
+        basedpyright = {
+          root_dir = function(bufnr, on_dir)
+            local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+            -- Validate buffer is a normal file buffer
+            local is_special_uri = bufname:match("^%a+://")  -- fugitive://, etc.
+            local is_special_buf = vim.bo[bufnr].buftype ~= ""  -- terminal, help, etc.
+            local is_absolute_path = bufname:match("^/") or bufname:match("^[a-zA-Z]:")
+
+            if is_special_uri or is_special_buf or not is_absolute_path then
+              return  -- Don't call on_dir, LSP won't attach
+            end
+
+            -- Find project root directory for valid buffers
+            local root = vim.fs.find(
+              {'pyrightconfig.json', 'pyproject.toml', 'setup.py', '.git'},
+              { upward = true, path = vim.fs.dirname(bufname) }
+            )[1]
+
+            if root then
+              on_dir(vim.fs.dirname(root))
+            end
+          end,
+          settings = {
+            basedpyright = {
+              analysis = {
+                diagnosticMode = "openFilesOnly",
+              }
+            }
+          }
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
