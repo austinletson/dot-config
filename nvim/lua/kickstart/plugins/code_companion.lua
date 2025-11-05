@@ -13,16 +13,8 @@ return {
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
     },
-  },
-  {
-    'AstroNvim/astrocore',
-    ---@type AstroCoreOpts
-    opts = {
-      mappings = {
-        n = {
-          ['<Leader>Po'] = { ':CodeCompanionChat<cr>', desc = 'Open code companion chat' },
-        },
-      },
+    keys = {
+      { '<Leader>Po', ':CodeCompanionChat<cr>', desc = 'Open code companion chat', mode = 'n' },
     },
   },
 }
