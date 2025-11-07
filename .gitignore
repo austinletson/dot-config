@@ -3,3 +3,4 @@ zsh/secrets
 gcloud
 gh
 uv/uv-receipt.json
+scripts/__pycache__/
