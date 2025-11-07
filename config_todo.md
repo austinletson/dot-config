@@ -1,3 +1,4 @@
 - [ ] Make nvim key binding for :Gvdiffsplit
-- [ ] Remove telescope entirely
 - [ ] Unify tmux pop up uis
+- [ ] nvim <leader>gD for diff split on branch isn't working
+- [ ] worktree picker with files changes to prune work trees

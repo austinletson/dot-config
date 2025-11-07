@@ -49,6 +49,8 @@ return {
               vim.cmd("Gvdiffsplit " .. item.text)
             end
           end
+
+
         })
       end, desc = "Git Diff against branch" },
     { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
