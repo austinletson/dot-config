@@ -42,15 +42,15 @@ return {
     { "<leader>fg", function() Snacks.picker.git_status() end, desc = "Git Status" },
     { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
     { "<leader>gD", function()
+        local original_file = vim.api.nvim_buf_get_name(0)
         Snacks.picker.pick("git_branches", {
           confirm = function(picker)
             local item = picker:current()
-            if item then
-              vim.cmd("Gvdiffsplit " .. item.text)
+            if item and item.branch and original_file ~= "" then
+              vim.cmd("edit " .. vim.fn.fnameescape(original_file))
+              vim.cmd("Gvdiffsplit " .. vim.fn.fnameescape(item.branch))
             end
           end
-
-
         })
       end, desc = "Git Diff against branch" },
     { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
