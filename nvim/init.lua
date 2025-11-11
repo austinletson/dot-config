@@ -58,6 +58,15 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '|', '<Cmd>vsplit<CR>', { desc = 'Vertical split' })
 vim.keymap.set('n', '_', '<Cmd>split<CR>', { desc = 'Horizontal split' })
 
+-- Jump between shell prompts (like tmux M-n/M-p)
+-- Searches for lines starting with the pure prompt character "❯"
+vim.keymap.set('n', '<M-n>', function()
+  vim.fn.search('^❯', 'W')
+end, { desc = 'Jump to next prompt' })
+vim.keymap.set('n', '<M-p>', function()
+  vim.fn.search('^❯', 'bW')
+end, { desc = 'Jump to previous prompt' })
+
 -- [[ Basic Autocommands ]]
 
 -- Highlight when yanking (copying) text
