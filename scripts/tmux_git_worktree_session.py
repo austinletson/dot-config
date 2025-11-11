@@ -88,6 +88,23 @@ def get_branches():
             # No worktree directory for this branch
             decorated_branches.append(f"  {branch}")
 
+    # Sort by indicator priority: * first, then !, then regular
+    def sort_key(branch):
+        indicator = branch[0]
+        if indicator == '*':
+            priority = 0
+        elif indicator == '!':
+            priority = 1
+        else:
+            priority = 2
+        # Within each priority, sort alphabetically by branch name (after stripping indicator)
+        branch_name = branch.lstrip('*! ')
+        if '(' in branch_name:
+            branch_name = branch_name[:branch_name.index('(')].strip()
+        return (priority, branch_name.lower())
+
+    decorated_branches.sort(key=sort_key)
+
     return decorated_branches
 
 
@@ -331,12 +348,21 @@ def select_branch_with_fzf(branches):
         # Clean up
         os.unlink(branches_file)
 
-        if result.returncode != 0:
+        # Parse output first (fzf with --print-query outputs query on first line, selection on last)
+        lines = result.stdout.strip().split('\n')
+
+        # If user cancelled (Esc), output will be empty
+        if result.returncode != 0 and not result.stdout.strip():
             return None
 
-        # fzf with --print-query returns the query on first line, selection on last
-        lines = result.stdout.strip().split('\n')
-        selected = lines[-1] if lines else None
+        # With --print-query: first line is the query, last line is the selection
+        # If user typed something but didn't select (new branch), use the query
+        if len(lines) == 1:
+            # Only query, no selection - use the query (new branch scenario)
+            selected = lines[0]
+        else:
+            # Multiple lines - prefer selection (last line), fall back to query (first line) if empty
+            selected = lines[-1] if lines[-1] else lines[0]
 
         # Strip indicators (*, !, and leading spaces) and parenthetical from the branch name
         # Example: "* branch (other)" -> "branch", "! branch" -> "branch"
