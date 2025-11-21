@@ -309,13 +309,222 @@ fi
     return path
 
 
+def create_worktree_removal_script():
+    """Create a temporary script for removing worktrees."""
+    removal_script = r'''#!/bin/bash
+# Script to remove a worktree given a decorated branch name
+
+BRANCH_RAW="$1"
+
+# Strip indicators (*, !, spaces) and parenthetical from branch name
+BRANCH=$(echo "$BRANCH_RAW" | sed 's/^[*! ]*//' | sed 's/ (.*//')
+
+# Get repo name for constructing worktree path
+REPO_NAME=$(basename "$(git worktree list --porcelain | grep '^worktree' | head -1 | cut -d' ' -f2)")
+
+# Convert branch name to safe directory name (slashes to dashes)
+SAFE_BRANCH="${BRANCH//\//-}"
+
+# Look for worktree by directory name pattern first
+WORKTREE_PATH=""
+while IFS= read -r line; do
+    if [[ "$line" =~ ^worktree\ (.*)$ ]]; then
+        path="${BASH_REMATCH[1]}"
+        basename=$(basename "$path")
+        if [[ "$basename" == "${REPO_NAME}-worktree-${SAFE_BRANCH}" ]]; then
+            WORKTREE_PATH="$path"
+            break
+        fi
+    fi
+done < <(git worktree list --porcelain)
+
+# If not found by directory name, look for worktree by checked-out branch
+if [[ -z "$WORKTREE_PATH" ]]; then
+    current_path=""
+    current_branch=""
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^worktree\ (.*)$ ]]; then
+            current_path="${BASH_REMATCH[1]}"
+        elif [[ "$line" =~ ^branch\ refs/heads/(.*)$ ]]; then
+            current_branch="${BASH_REMATCH[1]}"
+            if [[ "$current_branch" == "$BRANCH" ]]; then
+                WORKTREE_PATH="$current_path"
+                break
+            fi
+        fi
+    done < <(git worktree list --porcelain)
+fi
+
+if [[ -z "$WORKTREE_PATH" ]]; then
+    echo "Error: No worktree found for branch '$BRANCH'"
+    exit 1
+fi
+
+# Don't allow removing the main worktree
+MAIN_WORKTREE=$(git worktree list --porcelain | grep '^worktree' | head -1 | cut -d' ' -f2)
+if [[ "$WORKTREE_PATH" == "$MAIN_WORKTREE" ]]; then
+    echo "Error: Cannot remove the main worktree"
+    exit 1
+fi
+
+# Remove the worktree (without --force)
+echo "Removing worktree: $WORKTREE_PATH"
+if git worktree remove "$WORKTREE_PATH" 2>&1; then
+    echo "✓ Successfully removed worktree for '$BRANCH'"
+
+    # Also kill the associated tmux session if it exists
+    SESSION_NAME="${REPO_NAME}-worktree-${SAFE_BRANCH}"
+    if tmux has-session -t="$SESSION_NAME" 2>/dev/null; then
+        tmux kill-session -t="$SESSION_NAME" 2>/dev/null
+        if [[ $? -eq 0 ]]; then
+            echo "✓ Also killed tmux session '$SESSION_NAME'"
+        fi
+    else
+        echo "ℹ No tmux session found for '$SESSION_NAME'"
+    fi
+else
+    echo "✗ Failed to remove worktree (may have uncommitted changes)"
+    exit 1
+fi
+'''
+
+    import tempfile
+    fd, path = tempfile.mkstemp(suffix='.sh', text=True)
+    with os.fdopen(fd, 'w') as f:
+        f.write(removal_script)
+
+    os.chmod(path, 0o755)
+    return path
+
+
+def create_worktree_force_removal_script():
+    """Create a temporary script for force-removing worktrees."""
+    removal_script = r'''#!/bin/bash
+# Script to force-remove a worktree given a decorated branch name
+
+BRANCH_RAW="$1"
+
+# Strip indicators (*, !, spaces) and parenthetical from branch name
+BRANCH=$(echo "$BRANCH_RAW" | sed 's/^[*! ]*//' | sed 's/ (.*//')
+
+# Get repo name for constructing worktree path
+REPO_NAME=$(basename "$(git worktree list --porcelain | grep '^worktree' | head -1 | cut -d' ' -f2)")
+
+# Convert branch name to safe directory name (slashes to dashes)
+SAFE_BRANCH="${BRANCH//\//-}"
+
+# Look for worktree by directory name pattern first
+WORKTREE_PATH=""
+while IFS= read -r line; do
+    if [[ "$line" =~ ^worktree\ (.*)$ ]]; then
+        path="${BASH_REMATCH[1]}"
+        basename=$(basename "$path")
+        if [[ "$basename" == "${REPO_NAME}-worktree-${SAFE_BRANCH}" ]]; then
+            WORKTREE_PATH="$path"
+            break
+        fi
+    fi
+done < <(git worktree list --porcelain)
+
+# If not found by directory name, look for worktree by checked-out branch
+if [[ -z "$WORKTREE_PATH" ]]; then
+    current_path=""
+    current_branch=""
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^worktree\ (.*)$ ]]; then
+            current_path="${BASH_REMATCH[1]}"
+        elif [[ "$line" =~ ^branch\ refs/heads/(.*)$ ]]; then
+            current_branch="${BASH_REMATCH[1]}"
+            if [[ "$current_branch" == "$BRANCH" ]]; then
+                WORKTREE_PATH="$current_path"
+                break
+            fi
+        fi
+    done < <(git worktree list --porcelain)
+fi
+
+if [[ -z "$WORKTREE_PATH" ]]; then
+    echo "Error: No worktree found for branch '$BRANCH'"
+    exit 1
+fi
+
+# Don't allow removing the main worktree
+MAIN_WORKTREE=$(git worktree list --porcelain | grep '^worktree' | head -1 | cut -d' ' -f2)
+if [[ "$WORKTREE_PATH" == "$MAIN_WORKTREE" ]]; then
+    echo "Error: Cannot remove the main worktree"
+    exit 1
+fi
+
+# Force remove the worktree (with --force)
+echo "⚠️  Force removing worktree: $WORKTREE_PATH"
+echo "⚠️  (uncommitted changes will be lost)"
+if git worktree remove --force "$WORKTREE_PATH" 2>&1; then
+    echo "✓ Successfully force-removed worktree for '$BRANCH'"
+
+    # Also kill the associated tmux session if it exists
+    SESSION_NAME="${REPO_NAME}-worktree-${SAFE_BRANCH}"
+    if tmux has-session -t="$SESSION_NAME" 2>/dev/null; then
+        tmux kill-session -t="$SESSION_NAME" 2>/dev/null
+        if [[ $? -eq 0 ]]; then
+            echo "✓ Also killed tmux session '$SESSION_NAME'"
+        fi
+    else
+        echo "ℹ No tmux session found for '$SESSION_NAME'"
+    fi
+else
+    echo "✗ Failed to force-remove worktree"
+    exit 1
+fi
+'''
+
+    import tempfile
+    fd, path = tempfile.mkstemp(suffix='.sh', text=True)
+    with os.fdopen(fd, 'w') as f:
+        f.write(removal_script)
+
+    os.chmod(path, 0o755)
+    return path
+
+
+def create_branch_list_reload_script():
+    """Create a temporary script for reloading the branch list in fzf."""
+    # Get the absolute path to this script
+    script_path = os.path.abspath(__file__)
+
+    reload_script = f'''#!/usr/bin/env python3
+import sys
+import os
+
+# Add script directory to path
+sys.path.insert(0, os.path.dirname("{script_path}"))
+
+# Import and call get_branches
+from tmux_git_worktree_session import get_branches
+
+branches = get_branches()
+for branch in branches:
+    print(branch)
+'''
+
+    import tempfile
+    fd, path = tempfile.mkstemp(suffix='.py', text=True)
+    with os.fdopen(fd, 'w') as f:
+        f.write(reload_script)
+
+    os.chmod(path, 0o755)
+    return path
+
+
 def select_branch_with_fzf(branches):
     """Use fzf to select or create a branch."""
     if not branches:
         return None
 
-    # Create preview script
+    # Create helper scripts
     preview_script = create_fzf_preview_script()
+    removal_script = create_worktree_removal_script()
+    force_removal_script = create_worktree_force_removal_script()
+    reload_script = create_branch_list_reload_script()
 
     try:
         # Write branches to a temporary file
@@ -335,7 +544,10 @@ def select_branch_with_fzf(branches):
             '--layout=reverse',
             f'--preview={preview_script} {{}}',
             '--preview-window=right:50%:wrap',
-            '--bind=enter:accept'
+            '--bind=enter:accept',
+            f'--bind=alt-d:execute({removal_script} {{}})+reload({reload_script})',
+            f'--bind=alt-D:execute({force_removal_script} {{}})+reload({reload_script})',
+            '--header=Alt-D: Remove | Alt-Shift-D: Force remove'
         ]
 
         result = subprocess.run(
@@ -375,8 +587,11 @@ def select_branch_with_fzf(branches):
         return selected
 
     finally:
-        # Clean up preview script
+        # Clean up helper scripts
         os.unlink(preview_script)
+        os.unlink(removal_script)
+        os.unlink(force_removal_script)
+        os.unlink(reload_script)
 
 
 def create_worktree(branch_name, worktree_path):
