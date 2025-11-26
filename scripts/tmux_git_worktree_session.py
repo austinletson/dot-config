@@ -678,21 +678,20 @@ def main():
     session_name = f"{repo_name}-worktree-{safe_branch_name}"
     worktree_path = os.path.join(os.path.dirname(git_root), session_name)
 
-    # Check if worktree or session already exists
-    if os.path.isdir(worktree_path):
-        tmux_message(f"❗️ Worktree or session '{session_name}' already exists.")
-        # Switch to existing session
-        run_command(f'tmux switch-client -t="{session_name}"', capture=False, check=False)
-        sys.exit(0)
-
-    # Check if tmux session exists
+    # Check if tmux session exists first
     _, returncode = run_command(
         f'tmux has-session -t="{session_name}"',
         check=False
     )
     if returncode == 0:
-        tmux_message(f"❗️ Session '{session_name}' already exists.")
+        tmux_message(f"✅ Switching to existing session '{session_name}'")
         run_command(f'tmux switch-client -t="{session_name}"', capture=False, check=False)
+        sys.exit(0)
+
+    # Check if worktree exists (but session doesn't, since we got here)
+    if os.path.isdir(worktree_path):
+        tmux_message(f"✅ Worktree exists, creating session '{session_name}'")
+        create_and_switch_to_session(session_name, worktree_path)
         sys.exit(0)
 
     # Create the worktree
