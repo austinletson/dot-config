@@ -3,3 +3,4 @@
 - [ ] nvim <leader>gD for diff split on branch isn't working
 - [ ] worktree picker with files changes to prune work trees
 - [ ] fix tmux alt-n and p keys to work if a venv is installed and also in visual mode
+- [ ] create a claude code command for moving some changes into a stacked PR
