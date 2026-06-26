@@ -7,3 +7,10 @@ scripts/__pycache__/
 
 # Claude Code local overrides
 claude/settings.local.json
+
+# Log files
+memory.log
+memory_pressure.log
+
+# Node modules
+opencode/node_modules/

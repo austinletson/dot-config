@@ -5,7 +5,7 @@
 # Use fzf to select a repository.
 # --expect=ctrl-o tells fzf to listen for that key and print it on the first line of output.
 # Compatible with older bash versions
-fzf_result=$(ghq list --full-path | fzf --prompt="Select Git Repository (Ctrl-o for 3 windows) > " --expect=ctrl-o)
+fzf_result=$(ghq list --full-path | fzf --layout=reverse --prompt="Select Git Repository (Ctrl-o for 3 windows) > " --expect=ctrl-o)
 
 # Exit if fzf was cancelled (e.g., user pressed Esc)
 if [[ -z "$fzf_result" ]]; then

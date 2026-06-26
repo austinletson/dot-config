@@ -182,3 +182,6 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # SSL certificates for Python
 export SSL_CERT_FILE=$(python3 -m certifi)
 export REQUESTS_CA_BUNDLE=$(python3 -m certifi)
+
+# opencode
+export PATH=/Users/austinletson/.opencode/bin:$PATH

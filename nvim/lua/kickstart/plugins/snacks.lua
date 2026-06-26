@@ -28,6 +28,7 @@ return {
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
     { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+    { "<leader>E", function() Snacks.explorer.reveal({ hidden = true, show_ignored = true }) end, desc = "Reveal in Explorer (with hidden)" },
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
@@ -53,6 +54,36 @@ return {
           end
         })
       end, desc = "Git Diff against branch" },
+    { "<leader>gp", function()
+        vim.ui.input({ prompt = "Base branch: ", default = "main" }, function(base)
+          if not base or base == "" then return end
+          local files = vim.fn.systemlist("git diff --name-only " .. vim.fn.shellescape(base) .. "...HEAD")
+          if vim.v.shell_error ~= 0 then
+            vim.notify("git diff failed: " .. table.concat(files, "\n"), vim.log.levels.ERROR)
+            return
+          end
+          if #files == 0 then
+            vim.notify("No changes between " .. base .. " and HEAD", vim.log.levels.INFO)
+            return
+          end
+          Snacks.picker.pick({
+            items = vim.tbl_map(function(f) return { text = f, file = f } end, files),
+            format = "file",
+            preview = function(ctx)
+              return Snacks.picker.preview.cmd({
+                "git", "diff", base .. "...HEAD", "--", ctx.item.file,
+              }, ctx, { ft = "diff" })
+            end,
+            confirm = function(p, item)
+              p:close()
+              if item and item.file then
+                vim.cmd("edit " .. vim.fn.fnameescape(item.file))
+                vim.cmd("Gvdiffsplit " .. vim.fn.fnameescape(base))
+              end
+            end,
+          })
+        end)
+      end, desc = "PR Diff against branch" },
     { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
     -- Grep
     { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
