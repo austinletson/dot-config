@@ -526,6 +526,11 @@ def select_branch_with_fzf(branches):
     force_removal_script = create_worktree_force_removal_script()
     reload_script = create_branch_list_reload_script()
 
+    # Sibling prune script (removes stale, clean, session-less worktrees).
+    prune_script = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "tmux_prune_worktrees.py"
+    )
+
     try:
         # Write branches to a temporary file
         import tempfile
@@ -547,7 +552,9 @@ def select_branch_with_fzf(branches):
             '--bind=enter:accept',
             f'--bind=alt-d:execute({removal_script} {{}})+reload({reload_script})',
             f'--bind=alt-D:execute({force_removal_script} {{}})+reload({reload_script})',
-            '--header=Alt-D: Remove | Alt-Shift-D: Force remove'
+            f'--bind=alt-p:execute(python3 {prune_script} --delete --days 7; '
+            f'read -n1 -rp "Press any key...")+reload({reload_script})',
+            '--header=Alt-D: Remove | Alt-Shift-D: Force remove | Alt-P: Prune >1wk stale'
         ]
 
         result = subprocess.run(
