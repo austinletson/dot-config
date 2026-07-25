@@ -9,6 +9,7 @@
     "ask": [],
     "defaultMode": "auto"
   },
+  "model": "claude-fable-5[1m]",
   "enabledPlugins": {
     "lean@leanprover": true
   },
@@ -31,7 +32,7 @@
     "autoAllowBashIfSandboxed": true
   },
   "alwaysThinkingEnabled": true,
+  "skipWorkflowUsageWarning": true,
   "editorMode": "vim",
-  "skipAutoPermissionPrompt": true,
-  "skipWorkflowUsageWarning": true
+  "skipAutoPermissionPrompt": true
 }
