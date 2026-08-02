@@ -9,7 +9,7 @@
     "ask": [],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
   "enabledPlugins": {
     "lean@leanprover": true
   },
