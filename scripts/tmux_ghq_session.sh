@@ -1,50 +1,85 @@
 #!/bin/bash
-# A script to select a git repository and create or switch to a tmux session.
-# Supports a custom layout when started with Ctrl-O.
+# Select a git repository and create or switch to a tmux session.
+#
+#   Enter       Open the selected repo (default: 1 window)
+#   Ctrl-O      Open the selected repo with a 3-window (code/claude/shell) layout
+#   Ctrl-F      `ghq get` the pasted URL/owner-repo first, then open it
+#               (paste a repo spec like git@github.com:AxiomaticX/lean-extract.git,
+#                or https://github.com/AxiomaticX/lean-extract.git, or owner/repo,
+#                then press Ctrl-F to fetch and open)
 
-# Use fzf to select a repository.
-# --expect=ctrl-o tells fzf to listen for that key and print it on the first line of output.
-# Compatible with older bash versions
-fzf_result=$(ghq list --full-path | fzf --layout=reverse --prompt="Select Git Repository (Ctrl-o for 3 windows) > " --expect=ctrl-o)
+fzf_result=$(ghq list --full-path | fzf \
+    --layout=reverse \
+    --prompt="Select Git Repository > " \
+    --header="Enter=open   Ctrl-O=3-window layout   Ctrl-F=ghq get (paste URL, then Ctrl-F)" \
+    --print-query \
+    --expect=ctrl-o,ctrl-f)
+fzf_exit=$?
 
-# Exit if fzf was cancelled (e.g., user pressed Esc)
+# fzf exits non-zero for both cancel (Esc, exit 130, empty output) AND
+# no-match accept (exit 1, but still prints query+key). So don't gate on the
+# exit code — detect cancel by empty output instead.
 if [[ -z "$fzf_result" ]]; then
     exit 0
 fi
 
-# Extract the key pressed and the selected repository path
-# Split the result by newlines
-key_pressed=$(echo "$fzf_result" | head -n1)
-repo_path=$(echo "$fzf_result" | tail -n1)
+# --print-query always emits the query on line 1; --expect emits the pressed
+# key on line 2 (empty if none); the selected item, if any, is on line 3.
+query=$(printf '%s\n' "$fzf_result" | sed -n '1p')
+key_pressed=$(printf '%s\n' "$fzf_result" | sed -n '2p')
+repo_path=$(printf '%s\n' "$fzf_result" | sed -n '3p')
 
-# If only one line returned, it means no special key was pressed
-if [[ "$key_pressed" == "$repo_path" ]]; then
-    key_pressed=""
+# Ctrl-F: fetch the pasted query with ghq, then resolve its local path.
+if [[ -z "$repo_path" && "$key_pressed" == "ctrl-f" && -n "$query" ]]; then
+    echo "Fetching: $query"
+    if ! ghq get "$query"; then
+        echo
+        echo "ghq get failed for: $query"
+        echo "Press any key to close..."
+        read -n1
+        exit 1
+    fi
+
+    # ghq stores <root>/<host>/<user>/<project>; `ghq list -e -p` matches
+    # "project" or "user/project". Derive that from the pasted spec.
+    q="${query%.git}"
+    q="${q#ssh://}"; q="${q#git://}"; q="${q#https://}"; q="${q#http://}"
+    q="${q#*@}"                      # drop scp-like "git@" user prefix
+    before="${q%%[:/]*}"             # text before the first ':' or '/'
+    if [[ "$before" == *.* ]]; then  # looks like a host -> drop it + separator
+        q="${q#"$before"}"
+        q="${q#[:/]}"
+    fi
+
+    repo_path=$(ghq list --full-path --exact "$q" | head -n1)
+    if [[ -z "$repo_path" ]]; then
+        echo "Could not resolve local path for: $query"
+        echo "Press any key to close..."
+        read -n1
+        exit 1
+    fi
 fi
 
-# Sanitize the repo name to create a valid tmux session name
-# (e.g., "my.project.com" becomes "my-project-com")
+# Nothing selected and no fetch requested.
+if [[ -z "$repo_path" ]]; then
+    exit 0
+fi
+
+# Sanitize the repo name into a valid tmux session name
+# (e.g. "my.project.com" becomes "my-project-com")
 session_name=$(basename "$repo_path" | tr . -)
 
-# If the session already exists, just switch to it, regardless of the key pressed.
-if tmux has-session -t="$session_name" 2>/dev/null; then
-    # Fall-through to the attach/switch logic at the end
-    :
 # If the session does NOT exist, create it based on the key press.
-else
-    # --- This is the new conditional logic ---
+if ! tmux has-session -t="$session_name" 2>/dev/null; then
     if [[ "$key_pressed" == "ctrl-o" ]]; then
-        # Create a session with a custom 3-window layout
+        # Custom 3-window layout: code (nvim), claude, shell
         tmux new-session -d -s "$session_name" -c "$repo_path" -n "code"
         tmux send-keys -t "$session_name:code" "nvim" C-m
-
         tmux new-window -t "$session_name" -c "$repo_path" -n "claude"
         tmux new-window -t "$session_name" -c "$repo_path" -n "shell"
-        
-        # Select the first window (code) to be active by default
         tmux select-window -t "$session_name:code"
     else
-        # Default behavior: create a simple session with one window
+        # Default: single-window session
         tmux new-session -d -s "$session_name" -c "$repo_path"
     fi
 fi
