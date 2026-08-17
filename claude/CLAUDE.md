@@ -1,5 +1,6 @@
 # Global instructions
 
+- Never use em dashes, ever
 - Favor simple solutions to problems over complex ones unless the complexity is justified.
 - Always start with simple solutions if they might work.
 - Keep summaries meant for human review as brief as possible without leaving out essentials.
